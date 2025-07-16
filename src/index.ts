@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import userRoute from "./routes/userRoute";
 import productRoute from "./routes/productRoute";
+import carteRoute from "./routes/carteRoute"
 import { seedInitialProducts } from "./services/productService";
 
 const app = express();
@@ -26,6 +27,7 @@ mongoose
     // Register routes after successful DB connection
     app.use("/user", userRoute);
     app.use("/product", productRoute);
+    app.use("/cart", carteRoute)
     
     // Start server after everything is set up
     app.listen(port, () => {
