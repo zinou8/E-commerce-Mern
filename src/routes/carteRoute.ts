@@ -1,5 +1,5 @@
 import express from "express";
-import { getActiveCardForUser } from "../services/carteService";
+import { addItemToCart, getActiveCardForUser } from "../services/carteService";
 import validateJWT from "../middleware/validateJWT";
 
 const router = express.Router();
@@ -10,15 +10,21 @@ router.get("/", validateJWT, async (req: any, res: any) => {
     if (!req.user) {
       return res.status(401).json({ error: "User not authenticated" });
     }
-    
+
     const userId = req.user._id;
     const cart = await getActiveCardForUser({ userId });
-    
+
     res.status(200).json(cart);
   } catch (error) {
     console.error("Error fetching cart:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
+router.post("/items", validateJWT, async (req: any, res: any) => {
+  const userId = req?.user?._id;
+  const {productId , quantity} = req.body 
+  const response = await addItemToCart({userId , productId , quantity});
+  res.status(response.statusCode).send(response.data)
+});
 
-export default router; 
+export default router;
