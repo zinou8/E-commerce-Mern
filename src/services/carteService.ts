@@ -40,7 +40,9 @@ export const addItemToCart = async ({
 }: AddItemToCart) => {
   const cart = await getActiveCardForUser({ userId });
 
-  const existInCart = cart.items.find((p) => p.product.toString() === productId);
+  const existInCart = cart.items.find(
+    (p) => p.product.toString() === productId
+  );
 
   if (existInCart) {
     return { data: "item already exists in cart ", statusCode: 400 };
@@ -51,9 +53,8 @@ export const addItemToCart = async ({
   if (!product) {
     return { data: "Product not found !", statusCode: 400 };
   }
-
-  if (product.stock < quantity){
-    return{data : "Low stock for item " , statusCode : 400 }
+  if (product.stock < quantity) {
+    return { data: "Low stock for item ", statusCode: 400 };
   }
 
   cart.items.push({
@@ -62,12 +63,65 @@ export const addItemToCart = async ({
     quantity,
   });
 
-  // update the totalamount for the cart 
+  // update the totalamount for the cart
 
-  cart.totalAmount += product.price * quantity
-
+  cart.totalAmount += product.price * quantity;
 
   const updatedCart = await cart.save();
 
+  return { data: updatedCart, statusCode: 200 };
+};
+
+interface UpdateItemToCart {
+  productId: any;
+  quantity: number;
+  userId: string;
+}
+
+export const updateItemInCart = async ({
+  productId,
+  userId,
+  quantity,
+}: UpdateItemToCart) => {
+  const cart = await getActiveCardForUser({ userId });
+
+  const existInCart = cart.items.find(
+    (p) => p.product.toString() === productId
+  );
+
+  if (!existInCart) {
+    return { data: "Item does not exist in cart ", statusCode: 400 };
+  }
+
+  const product = await productModel.findById(productId);
+
+  if (!product) {
+    return { data: "Product not found !", statusCode: 400 };
+  }
+
+  if (product.stock < quantity) {
+    return { data: "Low stock for item ", statusCode: 400 };
+  }
+
+
+  const otherCartItems = cart.items.filter(
+    (p) => p.product.toString() !== productId
+  );
+
+  console.log(otherCartItems)
+
+  let total = otherCartItems.reduce((sum, product) => {
+    sum += product.quantity * product.unitPrice;
+    return sum;
+  }, 0);
+
+    existInCart.quantity = quantity;
+ 
+
+  total += existInCart.quantity * existInCart.unitPrice;
+
+  cart.totalAmount = total
+
+  const updatedCart = await cart.save();
   return { data: updatedCart, statusCode: 200 };
 };
