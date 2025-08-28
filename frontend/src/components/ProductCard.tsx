@@ -4,6 +4,7 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+
 interface Props {
   id: string;
   title: string;
@@ -11,7 +12,7 @@ interface Props {
   price: string;
 }
 
-export default function ProductCard({ id, title, image, price }: props) {
+export default function ProductCard({ id, title, image, price }: Props) { // Fixed: Props with capital P
   return (
     <Card
       sx={{
