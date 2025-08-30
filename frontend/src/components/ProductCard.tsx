@@ -1,47 +1,43 @@
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
+import { Card, CardContent, CardMedia, Typography, Button, Box } from '@mui/material';
 
-interface Props {
+interface ProductCardProps {
   id: string;
   title: string;
   image: string;
-  price: string;
+  price: number | string;
 }
 
-export default function ProductCard({ id, title, image, price }: Props) { // Fixed: Props with capital P
+const ProductCard = ({ title, image, price }: ProductCardProps) => {
   return (
-    <Card
-      sx={{
-        maxWidth: 345,
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
+    <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <CardMedia
         component="img"
-        alt="HP Laptop"
-        height="140"
+        height="200"
         image={image}
-        sx={{ objectFit: "cover" }}
+        alt={title}
+        sx={{ objectFit: 'cover' }}
       />
       <CardContent sx={{ flexGrow: 1 }}>
-        <Typography gutterBottom variant="h5" component="div">
+        <Typography gutterBottom variant="h6" component="h2">
           {title}
         </Typography>
-        <Typography variant="body2" sx={{ color: "text.secondary" }}>
-          {price}
+        <Typography variant="h5" color="primary" sx={{ mb: 2 }}>
+          ${typeof price === 'number' ? price.toFixed(2) : price}
         </Typography>
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <Button 
+            variant="contained" 
+            color="primary" 
+            size="small"
+            fullWidth
+          >
+            Add to Cart
+          </Button>
+         
+        </Box>
       </CardContent>
-      <CardActions>
-        <Button variant="contained" size="small" color="primary">
-          Add To Cart
-        </Button>
-      </CardActions>
     </Card>
   );
-}
+};
+
+export default ProductCard;
