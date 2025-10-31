@@ -15,13 +15,13 @@ import { Button, Grid } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 function Navbar() {
-  const { username, isAuthenticated } = useAuth();
+  const { username, isAuthenticated, logout } = useAuth();
 
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -31,10 +31,15 @@ function Navbar() {
     setAnchorElUser(null);
   };
 
-  const handleLogin = ()=>{
-    navigate("/login")
+  const handleLogin = () => {
+    navigate("/login");
+  };
 
-  }
+  const handelLogout = () => {
+    logout();
+    navigate("/");
+    handleCloseUserMenu();
+  };
 
   return (
     <AppBar position="static">
@@ -115,7 +120,7 @@ function Navbar() {
                         My Orders
                       </Typography>
                     </MenuItem>
-                    <MenuItem onClick={handleCloseUserMenu}>
+                    <MenuItem onClick={handelLogout}>
                       <Typography sx={{ textAlign: "center" }}>
                         Logout
                       </Typography>
@@ -123,7 +128,13 @@ function Navbar() {
                   </Menu>
                 </>
               ) : (
-                <Button variant="contained" color="success" onClick={handleLogin}>Login</Button> 
+                <Button
+                  variant="contained"
+                  color="success"
+                  onClick={handleLogin}
+                >
+                  Login
+                </Button>
               )}
             </Box>
           </Box>
