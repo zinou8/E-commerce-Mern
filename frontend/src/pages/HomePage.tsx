@@ -37,7 +37,7 @@ const HomePage = () => {
         {products.map((product) => (
           <Grid key={product._id} size={{ xs: 12, sm: 6, md: 4 }}>
             <ProductCard
-              id={product._id}
+              _id={product._id}
               title={product.title}
               image={product.image}
               price={product.price}

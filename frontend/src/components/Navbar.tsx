@@ -7,11 +7,12 @@ import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
 import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
+import ShoppingCart from "@mui/icons-material/ShoppingCart";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import { useAuth } from "../context/Auth/AuthContext";
-import { Button, Grid } from "@mui/material";
+import { Badge, Button, Grid } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 function Navbar() {
@@ -39,6 +40,10 @@ function Navbar() {
     logout();
     navigate("/");
     handleCloseUserMenu();
+  };
+  const handleCart = () => {
+
+    navigate('/cart ')
   };
 
   return (
@@ -76,7 +81,18 @@ function Navbar() {
               </Typography>
             </Box>
 
-            <Box sx={{ flexGrow: 0 }}>
+            <Box
+              gap={4}
+              alignItems="center"
+              justifyContent="center"
+              display="flex"
+              flexDirection="row"
+            >
+              <IconButton aria-label="cart" onClick={handleCart}>
+                <Badge badgeContent={4} color="secondary">
+                  <ShoppingCart sx={{ color: "#ffffff" }} />
+                </Badge>
+              </IconButton>
               {isAuthenticated ? (
                 <>
                   <Tooltip title="Open settings">
