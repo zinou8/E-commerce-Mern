@@ -9,6 +9,9 @@ const CartPage = () => {
   const { cartItems, totalAmount, updateItemInCart } = useCart();
 
   const handleQuantity = (productId: string, quantity: number) => {
+    if(quantity<= 0){
+      return
+    }
     updateItemInCart(productId, quantity);
   };
 

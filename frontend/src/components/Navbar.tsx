@@ -44,7 +44,7 @@ function Navbar() {
     handleCloseUserMenu();
   };
   const handleCart = () => {
-    navigate("/cart ");
+    navigate("/cart");
   };
 
   return (

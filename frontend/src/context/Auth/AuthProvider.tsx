@@ -2,7 +2,7 @@ import { useState, type FC, type PropsWithChildren } from "react";
 import { AuthContext } from "./AuthContext";
 
 const USERNAME_KEY = "username";
-const TOKEN_KEY = "token ";
+const TOKEN_KEY = "token";
 
 const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   const [username, setUsername] = useState<string | null>(
