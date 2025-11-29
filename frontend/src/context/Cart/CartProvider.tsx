@@ -72,6 +72,48 @@ const CartProvider: FC<PropsWithChildren> = ({ children }) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const cartItemsMapped = cart.items.map(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ({ product, quantity ,unitPrice }: { product: any; quantity: number ,unitPrice :number }) => ({
+          productId: product._id,
+          title: product.title,
+          image: product.image,
+          quantity,
+          unitPrice,
+        })
+      );
+ 
+      setCartItems([...cartItemsMapped]);
+      setTotalAmount(cart.totalAmount);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const updateItemInCart = async (productId : string , quantity : number ) =>{
+     try {
+      const response = await fetch(`${BASE_URL}/cart/items`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          productId,
+          quantity,
+        }),
+      });
+
+      if (!response.ok) {
+        setError("Failed To update ");
+      }
+      const cart = await response.json();
+
+      if (!cart) {
+        setError("Failed to parse data");
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const cartItemsMapped = cart.items.map(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ({ product, quantity }: { product: any; quantity: number }) => ({
           productId: product._id,
           title: product.title,
@@ -86,7 +128,9 @@ const CartProvider: FC<PropsWithChildren> = ({ children }) => {
     } catch (error) {
       console.error(error);
     }
-  };
+  }
+
+
 
   return (
     <CartContext.Provider
@@ -94,6 +138,7 @@ const CartProvider: FC<PropsWithChildren> = ({ children }) => {
         cartItems,
         totalAmount,
         AddItemToCart,
+        updateItemInCart
       }}
     >
       {children}
