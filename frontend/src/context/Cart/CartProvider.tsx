@@ -1,6 +1,6 @@
-import { useEffect, useState, type FC, type PropsWithChildren } from "react";
+import { FC, PropsWithChildren, useEffect, useState } from "react";
 import { CartContext } from "./CartContext";
-import type { CartItem } from "../../types/CartItem";
+import { CartItem } from "../../types/CartItem";
 import { BASE_URL } from "../../constants/baseUrl";
 import { useAuth } from "../Auth/AuthContext";
 
@@ -10,12 +10,11 @@ const CartProvider: FC<PropsWithChildren> = ({ children }) => {
   const [totalAmount, setTotalAmount] = useState<number>(0);
   const [error, setError] = useState("");
 
-  
   useEffect(() => {
- 
-    if(!token){
-        return
+    if (!token) {
+      return;
     }
+
     const fetchCart = async () => {
       const response = await fetch(`${BASE_URL}/cart`, {
         headers: {
@@ -24,13 +23,22 @@ const CartProvider: FC<PropsWithChildren> = ({ children }) => {
       });
 
       if (!response.ok) {
-        setError("Failed to fetch userCart. please try again ");
+        setError("Failed to fetch user cart. Please try again");
       }
 
-      const cart =  await response.json( )
+      const cart = await response.json();
+
       const cartItemsMapped = cart.items.map(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        ({ product, quantity , unitPrice }: { product: any; quantity: number ; unitPrice : number }) => ({
+        ({
+          product,
+          quantity,
+          unitPrice,
+        }: {
+          product: any;
+          quantity: number;
+          unitPrice: number;
+        }) => ({
           productId: product._id,
           title: product.title,
           image: product.image,
@@ -38,15 +46,15 @@ const CartProvider: FC<PropsWithChildren> = ({ children }) => {
           unitPrice,
         })
       );
-      setCartItems(cartItemsMapped)
-      setTotalAmount(cart.totalAmount)
+
+      setCartItems(cartItemsMapped);
+      setTotalAmount(cart.totalAmount);
     };
 
     fetchCart();
-  },[token]);
-  
+  }, [token]);
 
-  const AddItemToCart = async (productId: string) => {
+  const addItemToCart = async (productId: string) => {
     try {
       const response = await fetch(`${BASE_URL}/cart/items`, {
         method: "POST",
@@ -61,26 +69,26 @@ const CartProvider: FC<PropsWithChildren> = ({ children }) => {
       });
 
       if (!response.ok) {
-        setError("Failed add to cart");
+        setError("Failed to add to cart");
       }
+
       const cart = await response.json();
 
       if (!cart) {
-        setError("Failed to parse data");
+        setError("Failed to parse cart data");
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const cartItemsMapped = cart.items.map(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        ({ product, quantity ,unitPrice }: { product: any; quantity: number ,unitPrice :number }) => ({
+        ({ product, quantity }: { product: any; quantity: number }) => ({
           productId: product._id,
           title: product.title,
           image: product.image,
           quantity,
-          unitPrice,
+          unitPrice: product.unitPrice,
         })
       );
- 
+
       setCartItems([...cartItemsMapped]);
       setTotalAmount(cart.totalAmount);
     } catch (error) {
@@ -88,8 +96,8 @@ const CartProvider: FC<PropsWithChildren> = ({ children }) => {
     }
   };
 
-  const updateItemInCart = async (productId : string , quantity : number ) =>{
-     try {
+  const updateItemInCart = async (productId: string, quantity: number) => {
+    try {
       const response = await fetch(`${BASE_URL}/cart/items`, {
         method: "PUT",
         headers: {
@@ -103,23 +111,31 @@ const CartProvider: FC<PropsWithChildren> = ({ children }) => {
       });
 
       if (!response.ok) {
-        setError("Failed To update ");
+        setError("Failed to update to cart");
       }
+
       const cart = await response.json();
 
       if (!cart) {
-        setError("Failed to parse data");
+        setError("Failed to parse cart data");
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const cartItemsMapped = cart.items.map(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        ({ product, quantity , unitPrice  }: { product: any; quantity: number ; unitPrice  : number  }) => ({
+        ({
+          product,
+          quantity,
+          unitPrice,
+        }: {
+          product: any;
+          quantity: number;
+          unitPrice: number;
+        }) => ({
           productId: product._id,
           title: product.title,
           image: product.image,
           quantity,
-          unitPrice ,
+          unitPrice,
         })
       );
 
@@ -128,17 +144,88 @@ const CartProvider: FC<PropsWithChildren> = ({ children }) => {
     } catch (error) {
       console.error(error);
     }
-  }
+  };
 
+  const removeItemInCart = async (productId: string) => {
+    try {
+      const response = await fetch(`${BASE_URL}/cart/items/${productId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
+      if (!response.ok) {
+        setError("Failed to delete to cart");
+      }
+
+      const cart = await response.json();
+
+      if (!cart) {
+        setError("Failed to parse cart data");
+      }
+
+      const cartItemsMapped = cart.items.map(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ({
+          product,
+          quantity,
+          unitPrice,
+        }: {
+          product: any;
+          quantity: number;
+          unitPrice: number;
+        }) => ({
+          productId: product._id,
+          title: product.title,
+          image: product.image,
+          quantity,
+          unitPrice,
+        })
+      );
+
+      setCartItems([...cartItemsMapped]);
+      setTotalAmount(cart.totalAmount);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const clearCart = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/cart`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        setError("Failed to empty to cart");
+      }
+
+      const cart = await response.json();
+
+      if (!cart) {
+        setError("Failed to parse cart data");
+      }
+
+      setCartItems([]);
+      setTotalAmount(0);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <CartContext.Provider
       value={{
         cartItems,
         totalAmount,
-        AddItemToCart,
-        updateItemInCart
+        addItemToCart,
+        updateItemInCart,
+        removeItemInCart,
+        clearCart,
       }}
     >
       {children}
