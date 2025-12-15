@@ -16,7 +16,7 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ _id, title, image, price }: ProductCardProps) => {
-  const { AddItemToCart } = useCart();
+  const { addItemToCart } = useCart();
   return (
     <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
       <CardMedia
@@ -38,7 +38,7 @@ const ProductCard = ({ _id, title, image, price }: ProductCardProps) => {
             variant="contained"
             color="primary"
             size="small"
-            onClick={() => AddItemToCart(_id)}
+            onClick={() => addItemToCart(_id)}
             fullWidth
           >
             Add to Cart
